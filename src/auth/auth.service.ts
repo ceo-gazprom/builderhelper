@@ -1,33 +1,57 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CompanyService } from '../company/company.service';
 import * as bcrypt from 'bcryptjs';
+import { CompanyService } from '../company/company.service';
+import { EmployeeService } from '../employee/employee.service';
+import { CreateCompanyDto } from '../company/dtos/create-company.dto';
+import { Company } from '../company/entities/company.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly companyService: CompanyService,
+    private readonly employeeService: EmployeeService,
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateCompany(email: string, pass: string): Promise<any> {
-    const company = await this.companyService.findByEmail(email);
-    if (company && (await bcrypt.compare(pass, company.password))) {
-      const { password, ...result } = company;
+  async validateUser(email: string, pass: string, isCompany: boolean): Promise<any> {
+    const user = isCompany
+      ? await this.companyService.findByEmail(email)
+      : await this.employeeService.findByEmail(email);
+
+    if (user && (await bcrypt.compare(pass, user.password))) {
+      const { password, ...result } = user;
       return result;
     }
     return null;
   }
 
-  async login(company: any) {
-    const payload = { name: company.name, sub: company.id };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
-  }
+    // Метод для регистрации компании
+    async register(createCompanyDto: CreateCompanyDto): Promise<Company> {
+      const { name, email, password } = createCompanyDto;
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newCompany = await this.companyService.create({
+        name,
+        email,
+        password: hashedPassword,
+      });
+      return newCompany;
+    }
 
-  async register(name: string, email: string, password: string) {
+  // Метод для генерации JWT токена
+  async login(company: Company): Promise<{ accessToken: string }> {
+    const payload = { email: company.email, sub: company.id };
+    const accessToken = this.jwtService.sign(payload);
+    return { accessToken };
+  }  
+
+  async registerCompany(name: string, email: string, password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
     return this.companyService.register(name, email, hashedPassword);
+  }
+
+  async registerEmployee(firstName: string, lastName: string, email: string, password: string, companyId: number) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    return this.employeeService.register(firstName, lastName, email, hashedPassword, companyId);
   }
 }

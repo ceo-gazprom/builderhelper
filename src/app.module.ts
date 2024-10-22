@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
  */
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { JwtStrategy } from './auth/jwt.strategy';
 /**
@@ -13,6 +14,12 @@ import { CompanyService } from './company/company.service';
 import { CompanyController } from './company/company.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Company } from './company/entities/company.entity';
+/**
+ * Employee
+ */
+import { EmployeeService } from './employee/employee.service';
+import { EmployeeController } from './employee/employee.controller';
+import { Employee } from './employee/entities/employee.entity';
 
 @Module({
   imports: [
@@ -31,9 +38,9 @@ import { Company } from './company/entities/company.entity';
       autoLoadEntities: true,
       synchronize: true, // Не использовать в продакшене
     }),
-    TypeOrmModule.forFeature([Company]),
+    TypeOrmModule.forFeature([Company, Employee]),
   ],
-  controllers: [CompanyController],
-  providers: [AuthService, JwtStrategy, CompanyService],
+  controllers: [AuthController, CompanyController, EmployeeController],
+  providers: [AuthService, JwtStrategy, CompanyService, EmployeeService],
 })
 export class AppModule {}
