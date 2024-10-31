@@ -8,16 +8,18 @@ export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
   @Post('register')
-  async register(
+  public async register(
     @Body('name') name: string,
     @Body('email') email: string,
     @Body('password') password: string,
   ) {
-    return this.companyService.register(name, email, password);
+    await this.companyService.register(name, email, password);
+
+    return { status: 'success' };
   }
 
-  @Get()
-  async findAll() {
+  @Get('list')
+  public async list() {
     return this.companyService.findAll();
   }
 

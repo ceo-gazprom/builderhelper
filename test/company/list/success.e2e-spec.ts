@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 import { clearDatabase } from '../../test-utils';
 import { AppModule } from '../../../src/app.module';
 
-describe('/companies/register (POST) - регистрация компании', () => {
+describe('/companies/list (GET) - список компаний', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -22,16 +22,34 @@ describe('/companies/register (POST) - регистрация компании',
     await app.close();
   });
 
-  it('Должен зарегистрировать новую компанию', async () => {
-    const response = await request(app.getHttpServer())
+  it('Должен вернуть список компаний с пагинацией', async () => {
+    await request(app.getHttpServer())
       .post('/companies/register')
       .send({
         name: 'Test Company',
         email: 'testcompany@example.com',
         password: 'password123',
       })
+      await request(app.getHttpServer())
+      .post('/companies/register')
+      .send({
+        name: 'Test Company 1',
+        email: 'testcompany1@example.com',
+        password: 'password123',
+      })
+      await request(app.getHttpServer())
+      .post('/companies/register')
+      .send({
+        name: 'Test Company 2',
+        email: 'testcompany2@example.com',
+        password: 'password123',
+      })
       .expect(201);
+  
+    const response = await request(app.getHttpServer())
+      .get('/companies/list')
+      .expect(200);
 
-    expect(response.body).toEqual({ status: 'success' });
+    expect(response.body).toMatchSnapshot();
   });
 });
