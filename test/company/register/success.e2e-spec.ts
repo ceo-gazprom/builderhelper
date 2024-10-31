@@ -1,11 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
+import { DataSource } from 'typeorm';
+import { clearDatabase } from '../../test-utils';
 import { AppModule } from '../../../src/app.module';
 
 describe('/companies/register (POST) - регистрация компании', () => {
   let app: INestApplication;
   let createdCompanyId: number;
+  let dataSource: DataSource;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -14,6 +17,9 @@ describe('/companies/register (POST) - регистрация компании',
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+    dataSource = app.get(DataSource);
+    await clearDatabase(dataSource);
   });
 
   afterAll(async () => {
@@ -34,5 +40,4 @@ describe('/companies/register (POST) - регистрация компании',
     expect(response.body.name).toBe('Test Company');
     createdCompanyId = response.body.id;
   });
-  console.log()
 });
