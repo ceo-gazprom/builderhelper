@@ -30,11 +30,11 @@ import { Employee } from './employee/entities/employee.entity';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DATABASE_HOST,
+      host: process.env.DATABASE_HOST || 'localhost',
       port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
-      username: process.env.DATABASE_USER,
-      password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME,
+      username: process.env.DATABASE_USER || 'postgres',
+      password: process.env.DATABASE_PASSWORD || 'example',
+      database: process.env.DATABASE_NAME || 'nestjs',
       autoLoadEntities: true,
       synchronize: true, // Не использовать в продакшене
     }),

@@ -11,10 +11,14 @@ export class CompanyService {
     private companyRepository: Repository<Company>,
   ) {}
 
-  async create(name: string, email: string, password: string): Promise<Company> {
+  async register(name: string, email: string, password: string): Promise<Company> {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newCompany = this.companyRepository.create({ name, email, password: hashedPassword });
     return this.companyRepository.save(newCompany);
+  }
+
+  public validateCompany(email, password) {
+    return false;
   }
 
   async findByEmail(email: string): Promise<Company | undefined> {

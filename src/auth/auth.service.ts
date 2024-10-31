@@ -30,11 +30,11 @@ export class AuthService {
     async register(createCompanyDto: CreateCompanyDto): Promise<Company> {
       const { name, email, password } = createCompanyDto;
       const hashedPassword = await bcrypt.hash(password, 10);
-      const newCompany = await this.companyService.create({
+      const newCompany = await this.companyService.register(
         name,
         email,
-        password: hashedPassword,
-      });
+        hashedPassword,
+      );
       return newCompany;
     }
 
