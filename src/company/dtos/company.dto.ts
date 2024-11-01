@@ -4,18 +4,30 @@ import { ApiProperty } from '@nestjs/swagger';
 @Entity()
 export class Company {
   @PrimaryGeneratedColumn()
-  @ApiProperty({ example: 1, description: 'Уникальный идентификатор компании' })
-  id: number;
+  @ApiProperty({
+    example: 1,
+    description: 'Уникальный идентификатор компании',
+  })
+  public id: number;
 
   @Column()
-  @ApiProperty({ example: 'Test Company', description: 'Название компании' })
-  name: string;
+  @ApiProperty({
+    example: 'Test Company',
+    description: 'Название компании',
+  })
+  public name: string;
 
   @Column()
-  @ApiProperty({ example: 'test@example.com', description: 'Email компании' })
-  email: string;
+  @ApiProperty({
+    example: 'test@example.com',
+    description: 'Email компании',
+  })
+  public email: string;
 
   @Column()
-  @ApiProperty({ example: 'hashedpassword', description: 'Пароль компании (зашифрованный)' })
-  password: string;
+  @ApiProperty({
+    example: 'hashedpassword',
+    description: 'Пароль компании (зашифрованный)',
+  })
+  public password: string;
 }

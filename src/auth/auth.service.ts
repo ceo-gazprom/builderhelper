@@ -30,11 +30,11 @@ export class AuthService {
     async register(createCompanyDto: CreateCompanyDto): Promise<Company> {
       const { name, email, password } = createCompanyDto;
       const hashedPassword = await bcrypt.hash(password, 10);
-      const newCompany = await this.companyService.register(
+      const newCompany = await this.companyService.register({
         name,
         email,
-        hashedPassword,
-      );
+        password: hashedPassword,
+      });
       return newCompany;
     }
 
@@ -47,7 +47,8 @@ export class AuthService {
 
   async registerCompany(name: string, email: string, password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
-    return this.companyService.register(name, email, hashedPassword);
+    return this.companyService.register({
+      name, email, password: hashedPassword });
   }
 
   async registerEmployee(firstName: string, lastName: string, email: string, password: string, companyId: number) {

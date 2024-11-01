@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Company } from './entities/company.entity';
 import * as bcrypt from 'bcryptjs';
+import type { CreateCompanyDto } from './dtos/create-company.dto';
+import { CompanyError, CompanyErrorsEnum } from './exceptions';
 
 @Injectable()
 export class CompanyService {
@@ -11,7 +13,7 @@ export class CompanyService {
     private companyRepository: Repository<Company>,
   ) {}
 
-  async register(name: string, email: string, password: string): Promise<Company> {
+  async register({ name, password, email }: CreateCompanyDto): Promise<Company> {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newCompany = this.companyRepository.create({ name, email, password: hashedPassword });
     return this.companyRepository.save(newCompany);
@@ -29,7 +31,13 @@ export class CompanyService {
     return this.companyRepository.find();
   }
 
-  async findOne(id: number): Promise<Company> {
-    return this.companyRepository.findOne({ where: { id } });
+  public async findOne(id: number): Promise<Company> {
+    const company = await this.companyRepository.findOne({ where: { id } });
+
+    if (!company) {
+      throw new CompanyError(CompanyErrorsEnum.NotFound);
+    }
+
+    return company;
   }
 }

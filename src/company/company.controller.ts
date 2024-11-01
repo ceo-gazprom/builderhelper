@@ -1,19 +1,27 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  UseFilters,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CompanyService } from './company.service';
+import { CreateCompanyDto } from './dtos/create-company.dto';
+import { CompanyExceptionsFilter } from './exceptions/company-exceptions.filter';
 
 @ApiTags('auth')
 @Controller('companies')
+@UseFilters(CompanyExceptionsFilter)
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
   @Post('register')
   public async register(
-    @Body('name') name: string,
-    @Body('email') email: string,
-    @Body('password') password: string,
+    @Body() createCompanyDto: CreateCompanyDto
   ) {
-    await this.companyService.register(name, email, password);
+    await this.companyService.register(createCompanyDto);
 
     return { status: 'success' };
   }
@@ -24,7 +32,7 @@ export class CompanyController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  public async findOne(@Param('id') id: number) {
     return this.companyService.findOne(id);
   }
 }
