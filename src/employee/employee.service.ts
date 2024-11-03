@@ -15,7 +15,7 @@ export class EmployeeService {
   ) {}
 
   // Регистрация нового сотрудника
-  async register(
+  async create(
     firstName: string,
     lastName: string,
     email: string,

@@ -4,20 +4,20 @@ import { Company } from '../../company/entities/company.entity';
 @Entity()
 export class Employee {
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @Column()
-  firstName: string;
+  public firstName: string;
 
   @Column()
-  lastName: string;
+  public lastName: string;
 
   @Column({ unique: true })
-  email: string;
+  public email: string;
 
   @Column()
-  password: string;
+  public password: string;
 
   @ManyToOne(() => Company, company => company.employees)
-  company: Company;
+  public company: Company;
 }

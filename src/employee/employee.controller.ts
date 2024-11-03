@@ -1,13 +1,27 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  NotFoundException,
+  UseFilters,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { EmployeeService } from './employee.service';
 import { Employee } from './entities/employee.entity';
 import { CreateEmployeeDto } from './dtos/create-employee.dto';
+import { EmployeeExceptionsFilter } from './exceptions';
 
 @ApiTags('employees')
+@UseFilters(EmployeeExceptionsFilter)
 @Controller('employees')
 export class EmployeeController {
-  constructor(private readonly employeeService: EmployeeService) {}
+  constructor(
+    private readonly employeeService: EmployeeService,
+  ) {}
 
   @ApiOperation({ summary: 'Get all employees' })
   @ApiResponse({ status: 200, description: 'List of all employees', type: [Employee] })
@@ -15,6 +29,21 @@ export class EmployeeController {
   async findAll(): Promise<Employee[]> {
     return this.employeeService.findAll();
   }
+
+  @ApiOperation({ summary: 'Добвление сотрудника в компанию' })
+  @ApiBody({ description: 'Employee data', type: CreateEmployeeDto })
+  @ApiResponse({ status: 201, description: 'Сотрудник добавлен', type: Employee })
+  @Post()
+  async create(@Body() createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
+    return this.employeeService.create(createEmployeeDto);
+  }
+
+
+
+
+
+
+
 
   @ApiOperation({ summary: 'Get an employee by ID' })
   @ApiParam({ name: 'id', description: 'Employee ID' })
@@ -27,15 +56,6 @@ export class EmployeeController {
       throw new NotFoundException('Employee not found');
     }
     return employee;
-  }
-
-  @ApiOperation({ summary: 'Create a new employee' })
-  @ApiBody({ description: 'Employee data', type: CreateEmployeeDto })
-  @ApiResponse({ status: 201, description: 'Employee created', type: Employee })
-  @Post()
-  async create(@Body() createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
-    const { firstName, lastName, email, password, companyId } = createEmployeeDto;
-    return this.employeeService.register(firstName, lastName, email, password, companyId);
   }
 
   @ApiOperation({ summary: 'Update an existing employee' })

@@ -1,18 +1,36 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsInt, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class CreateEmployeeDto {
-  @ApiProperty({ example: 'John', description: 'First name of the employee' })
-  firstName: string;
+  @ApiProperty({
+    example: 1,
+    description: 'Id компании, за которой будет закреплен сотрудник',
+  })
+  @IsInt({ message: 'companyId должен быть целым числом' })
+  @IsNotEmpty({ message: 'companyId обязателен' })
+  public companyId: number;
 
-  @ApiProperty({ example: 'Doe', description: 'Last name of the employee' })
-  lastName: string;
+  @ApiProperty({
+    example: 'Иван',
+    description: 'Имя сотрудника',
+  })
+  @IsString({ message: 'firstName должен быть строкой' })
+  @IsNotEmpty({ message: 'firstName обязателен' })
+  public firstName: string;
 
-  @ApiProperty({ example: 'john.doe@example.com', description: 'Email address of the employee' })
-  email: string;
+  @ApiProperty({
+    example: 'Иванов',
+    description: 'Фамилия сотрудника',
+  })
+  @IsString({ message: 'lastName должен быть строкой' })
+  @IsNotEmpty({ message: 'lastName обязателен' })
+  public lastName: string;
 
-  @ApiProperty({ example: 'password123', description: 'Password for the employee' })
-  password: string;
-
-  @ApiProperty({ example: 1, description: 'ID of the company the employee belongs to' })
-  companyId: number;
+  @ApiProperty({
+    example: 'ivanov.ivan@mail.ru',
+    description: 'Адрес электронной почты сотрудника',
+  })
+  @IsEmail({}, { message: 'Неверный формат email' })
+  @IsNotEmpty({ message: 'email обязателен' })
+  public email: string;
 }
