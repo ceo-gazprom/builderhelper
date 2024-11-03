@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Company } from './entities/company.entity';
 import * as bcrypt from 'bcryptjs';
-import type { CreateCompanyDto } from './dtos/create-company.dto';
+import type { RegisterCompanyDto } from '../auth/dtos/register-company.dto';
 import { CompanyError, CompanyErrorsEnum } from './exceptions';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class CompanyService {
     private companyRepository: Repository<Company>,
   ) {}
 
-  async register({ name, password, email }: CreateCompanyDto): Promise<Company> {
+  async register({ name, password, email }: RegisterCompanyDto): Promise<Company> {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newCompany = this.companyRepository.create({ name, email, password: hashedPassword });
     return this.companyRepository.save(newCompany);
@@ -21,10 +21,6 @@ export class CompanyService {
 
   public validateCompany(email, password) {
     return false;
-  }
-
-  async findByEmail(email: string): Promise<Company | undefined> {
-    return this.companyRepository.findOne({ where: { email } });
   }
 
   async findAll(): Promise<Company[]> {
@@ -39,5 +35,16 @@ export class CompanyService {
     }
 
     return company;
+  }
+
+  /**
+   * Find by email
+   * 
+   * @description Нахожит компанию в БД по email
+   * @param email - email компании
+   * @returns сущность Company
+   */
+  public async findByEmail(email: Company['email']): Promise<Company> {
+    return this.companyRepository.findOne({ where: { email }});
   }
 }

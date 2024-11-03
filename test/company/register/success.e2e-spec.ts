@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 import { clearDatabase } from '../../test-utils';
 import { AppModule } from '../../../src/app.module';
 
-describe('/companies/register (POST) - регистрация компании', () => {
+describe('/company/register (POST) - регистрация компании', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -24,7 +24,7 @@ describe('/companies/register (POST) - регистрация компании',
 
   it('Должен зарегистрировать новую компанию', async () => {
     const response = await request(app.getHttpServer())
-      .post('/companies/register')
+      .post('/company/register')
       .send({
         name: 'Test Company',
         email: 'testcompany@example.com',

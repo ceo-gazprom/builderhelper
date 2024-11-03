@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 import { clearDatabase } from '../../test-utils';
 import { AppModule } from '../../../src/app.module';
 
-describe('/companies/:id (GET) - получить компанию по id', () => {
+describe('/company/:id (GET) - получить компанию по id', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -24,7 +24,7 @@ describe('/companies/:id (GET) - получить компанию по id', () 
 
   it('Должен вернуть исключение - компания не найдена', async () => {
     const response = await request(app.getHttpServer())
-      .get('/companies/1')
+      .get('/company/1')
       .expect(400);
 
     expect(response.body).toEqual({

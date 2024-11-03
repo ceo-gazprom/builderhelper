@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 import { clearDatabase } from '../../test-utils';
 import { AppModule } from '../../../src/app.module';
 
-describe('/companies/list (GET) - список компаний', () => {
+describe('/company/list (GET) - список компаний', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -24,21 +24,21 @@ describe('/companies/list (GET) - список компаний', () => {
 
   it('Должен вернуть список компаний с пагинацией', async () => {
     await request(app.getHttpServer())
-      .post('/companies/register')
+      .post('/company/register')
       .send({
         name: 'Test Company',
         email: 'testcompany@example.com',
         password: 'password123',
       })
       await request(app.getHttpServer())
-      .post('/companies/register')
+      .post('/company/register')
       .send({
         name: 'Test Company 1',
         email: 'testcompany1@example.com',
         password: 'password123',
       })
       await request(app.getHttpServer())
-      .post('/companies/register')
+      .post('/company/register')
       .send({
         name: 'Test Company 2',
         email: 'testcompany2@example.com',
@@ -47,9 +47,11 @@ describe('/companies/list (GET) - список компаний', () => {
       .expect(201);
   
     const response = await request(app.getHttpServer())
-      .get('/companies/list')
+      .get('/company/list')
       .expect(200);
 
-    expect(response.body).toMatchSnapshot();
+    expect(
+      response.body.map(({ password, ...company }) => company)
+    ).toMatchSnapshot();
   });
 });

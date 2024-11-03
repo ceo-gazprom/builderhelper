@@ -6,20 +6,29 @@ import {
   Param,
   UseFilters,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CompanyService } from './company.service';
-import { CreateCompanyDto } from './dtos/create-company.dto';
+import { RegisterCompanyDto } from '../auth/dtos/register-company.dto';
 import { CompanyExceptionsFilter } from './exceptions/company-exceptions.filter';
+import { CompanyErrorsEnum } from './exceptions';
 
-@ApiTags('auth')
-@Controller('companies')
+@ApiTags('Companies')
+@Controller('company')
 @UseFilters(CompanyExceptionsFilter)
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
+  @ApiTags('auth')
   @Post('register')
+  @ApiOperation({ summary: 'Регистрация новой компании' })
+  @ApiResponse({ status: 200, description: 'Компания успешно создана' })
+  @ApiResponse({
+    status: 400,
+    description: 'Некорректные данные',
+    example: CompanyErrorsEnum,
+  })
   public async register(
-    @Body() createCompanyDto: CreateCompanyDto
+    @Body() createCompanyDto: RegisterCompanyDto
   ) {
     await this.companyService.register(createCompanyDto);
 
