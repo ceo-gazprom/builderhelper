@@ -23,11 +23,11 @@ describe('/company/:id (GET) - получить компанию по id', () =>
   });
 
   it('Должен вернуть исключение - компания не найдена', async () => {
-    const response = await request(app.getHttpServer())
+    const { body } = await request(app.getHttpServer())
       .get('/company/1')
       .expect(400);
 
-    expect(response.body).toEqual({
+    expect(body).toEqual({
       code: 'company-001',
       message: 'Company not found.',
     });

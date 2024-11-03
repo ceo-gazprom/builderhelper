@@ -31,11 +31,11 @@ describe('/company/:id (GET) - получить компанию по id', () =>
         password: 'password123',
       })
   
-    const response = await request(app.getHttpServer())
+    const { body } = await request(app.getHttpServer())
       .get('/company/1')
       .expect(200);
 
-    expect(response.body).toEqual({
+    expect(body).toEqual({
       email: "testcompany@example.com",
       id: 1,
       name: "Test Company",

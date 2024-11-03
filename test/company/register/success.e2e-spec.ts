@@ -23,7 +23,7 @@ describe('/company/register (POST) - регистрация компании', (
   });
 
   it('Должен зарегистрировать новую компанию', async () => {
-    const response = await request(app.getHttpServer())
+    const { body } = await request(app.getHttpServer())
       .post('/company/register')
       .send({
         name: 'Test Company',
@@ -32,6 +32,6 @@ describe('/company/register (POST) - регистрация компании', (
       })
       .expect(201);
 
-    expect(response.body).toEqual({ status: 'success' });
+    expect(body).toEqual({ status: 'success' });
   });
 });

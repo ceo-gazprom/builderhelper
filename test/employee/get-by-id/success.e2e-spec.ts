@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 import { clearDatabase } from '../../test-utils';
 import { AppModule } from '../../../src/app.module';
 
-describe('/employee/create (POST) - Добавить работника в компанию', () => {
+describe('/employee/:companyId/:id (GET) - Получить данные сотрудника', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -22,7 +22,7 @@ describe('/employee/create (POST) - Добавить работника в ко�
     await app.close();
   });
 
-  it('Должен добавить работника', async () => {
+  it('Должен вернуть данные сотрудникаа', async () => {
     await request(app.getHttpServer())
       .post('/company/register')
       .send({
@@ -32,7 +32,7 @@ describe('/employee/create (POST) - Добавить работника в ко�
       })
       .expect(201);
 
-    const { body } = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post('/employee/create')
       .send({
         companyId: 1,
@@ -41,6 +41,15 @@ describe('/employee/create (POST) - Добавить работника в ко�
         email: 'ivanov.ivan@mail.ru',
       })
       .expect(201);
-    expect(body).toEqual({ status: 'success' });
+    
+    const { body } = await request(app.getHttpServer())
+      .get('/employee/1/1')
+      .expect(200);
+    expect(body).toEqual({
+      id: 1,
+      firstName: "Иван",
+      lastName: "Иванов",
+      email: "ivanov.ivan@mail.ru",
+    });
   });
 });

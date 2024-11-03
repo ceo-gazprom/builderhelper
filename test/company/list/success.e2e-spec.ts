@@ -46,12 +46,10 @@ describe('/company/list (GET) - список компаний', () => {
       })
       .expect(201);
   
-    const response = await request(app.getHttpServer())
+    const { body } = await request(app.getHttpServer())
       .get('/company/list')
       .expect(200);
 
-    expect(
-      response.body.map(({ password, ...company }) => company)
-    ).toMatchSnapshot();
+    expect(body.map(({ password, ...company }) => company)).toMatchSnapshot();
   });
 });

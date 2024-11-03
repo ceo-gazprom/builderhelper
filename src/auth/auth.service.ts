@@ -61,8 +61,8 @@ export class AuthService {
       name, email, password: hashedPassword });
   }
 
-  async registerEmployee(firstName: string, lastName: string, email: string, password: string, companyId: number) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    return this.employeeService.register(firstName, lastName, email, hashedPassword, companyId);
-  }
+  // async registerEmployee(firstName: string, lastName: string, email: string, password: string, companyId: number) {
+  //   const hashedPassword = await bcrypt.hash(password, 10);
+  //   return this.employeeService.register(firstName, lastName, email, hashedPassword, companyId);
+  // }
 }

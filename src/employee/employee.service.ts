@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Employee } from './entities/employee.entity';
 import { Company } from '../company/entities/company.entity';
+import { CreateEmployeeDto, GetEmployeeById } from './dtos';
+import { EmployeeError, EmployeeErrorsEnum } from './exceptions';
 
 @Injectable()
 export class EmployeeService {
@@ -14,29 +16,50 @@ export class EmployeeService {
     private readonly companyRepository: Repository<Company>,
   ) {}
 
-  // Регистрация нового сотрудника
-  async create(
-    firstName: string,
-    lastName: string,
-    email: string,
-    password: string,
-    companyId: number,
-  ): Promise<Employee> {
+  /**
+   * Create
+   *
+   * @description Добавить нового сотрудника
+   */
+  public async create({
+    firstName,
+    lastName,
+    email,
+    companyId,
+  }: CreateEmployeeDto): Promise<Employee> {
     const company = await this.companyRepository.findOne({ where: { id: companyId } });
     if (!company) {
-      throw new NotFoundException(`Компания с ID ${companyId} не найдена`);
+      throw new EmployeeError(EmployeeErrorsEnum.CompanyNotFound);
     }
 
     const newEmployee = this.employeeRepository.create({
       firstName,
       lastName,
       email,
-      password,
+      password: 'none',
       company,
     });
 
     return this.employeeRepository.save(newEmployee);
   }
+
+  public async findByIdAndCompanyId({
+    id,
+    companyId
+  }: GetEmployeeById): Promise<Employee> {
+    return this.employeeRepository.findOne({
+      where: {
+        id,
+        company: {
+          id: companyId,
+        }
+      }
+    })
+  }
+
+
+
+
 
   // Поиск сотрудника по email
   async findByEmail(email: string): Promise<Employee | undefined> {
